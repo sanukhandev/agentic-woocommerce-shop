@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'AGENTIC_SHOP_VERSION', '1.0.0' );
 define( 'AGENTIC_SHOP_PATH', plugin_dir_path( __FILE__ ) );
 
+require_once AGENTIC_SHOP_PATH . 'includes/class-prompt-builder-service.php';
+
 /**
  * Initialize the plugin.
  */
