@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "wp-env start",
+    "start": "wp-env start --update",
     "stop": "wp-env stop",
     "destroy": "wp-env destroy",
     "logs": "wp-env logs"
