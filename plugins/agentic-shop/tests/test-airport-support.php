@@ -30,4 +30,39 @@ final class Agentic_Airport_Support_Test extends WP_UnitTestCase {
 		$this->assertWPError( $result );
 		$this->assertSame( 'agentic_airport_missing_key', $result->get_error_code() );
 	}
+
+	public function test_uncached_lookups_are_rate_limited(): void {
+		$rate_key = 'agentic_airport_rate_' . hash( 'sha256', '127.0.0.1' );
+		$requests = 0;
+		$mock     = static function () use ( &$requests ): array {
+			++$requests;
+			return array( 'response' => array( 'code' => 200 ), 'body' => '[]' );
+		};
+
+		update_option( 'agentic_airport_api_key', 'test-key' );
+		delete_transient( $rate_key );
+		delete_transient( 'agentic_airport_flight_aa100' );
+		delete_transient( 'agentic_airport_flight_bb200' );
+		$_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+		$_POST                  = array(
+			'agentic_airport_action' => 'flight',
+			'agentic_airport_nonce'  => wp_create_nonce( 'agentic_airport_lookup' ),
+			'agentic_airport_query'  => 'AA100',
+		);
+		add_filter( 'pre_http_request', $mock );
+
+		Agentic_Airport_Support::render_shortcode();
+		$_POST['agentic_airport_query'] = 'BB200';
+		$output                          = Agentic_Airport_Support::render_shortcode();
+
+		remove_filter( 'pre_http_request', $mock );
+		delete_transient( $rate_key );
+		delete_transient( 'agentic_airport_flight_aa100' );
+		delete_transient( 'agentic_airport_flight_bb200' );
+		delete_option( 'agentic_airport_api_key' );
+		$_POST = array();
+
+		$this->assertSame( 1, $requests );
+		$this->assertStringContainsString( 'Please wait before trying another search.', $output );
+	}
 }

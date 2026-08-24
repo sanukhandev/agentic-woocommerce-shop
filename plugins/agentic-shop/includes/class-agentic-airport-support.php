@@ -89,16 +89,20 @@ final class Agentic_Airport_Support {
 				} elseif ( ! preg_match( '/^[A-Za-z0-9]{2,8}$/', $query ) ) {
 					$result = new WP_Error( 'agentic_airport_invalid_query', __( 'Enter a valid flight or airline IATA code.', 'agentic-shop' ) );
 				} else {
+					$client_ip = sanitize_text_field( wp_unslash( (string) ( $_SERVER['REMOTE_ADDR'] ?? '' ) ) );
 					$cache_key = 'agentic_airport_' . $mode . '_' . strtolower( $query );
+					$rate_key  = 'agentic_airport_rate_' . hash( 'sha256', $client_ip );
 					$cached    = get_transient( $cache_key );
 					if ( false !== $cached ) {
 						$result = $cached;
+					} elseif ( false !== get_transient( $rate_key ) ) {
+						$result = new WP_Error( 'agentic_airport_rate_limited', __( 'Please wait before trying another search.', 'agentic-shop' ) );
 					} else {
+						// ponytail: per-IP transient is a soft limit; move this to the edge under sustained traffic.
+						set_transient( $rate_key, 1, 6 );
 						$api    = new Agentic_Airport_API( (string) get_option( self::OPTION_KEY, '' ) );
 						$result = 'route' === $mode ? $api->get_routes( $query ) : $api->get_flight( $query );
-						if ( ! is_wp_error( $result ) ) {
-							set_transient( $cache_key, $result, 5 * MINUTE_IN_SECONDS );
-						}
+						set_transient( $cache_key, $result, is_wp_error( $result ) ? MINUTE_IN_SECONDS : 5 * MINUTE_IN_SECONDS );
 					}
 				}
 			}
