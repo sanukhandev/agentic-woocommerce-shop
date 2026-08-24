@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 define( 'AGENTIC_SHOP_VERSION', '1.0.0' );
 define( 'AGENTIC_SHOP_PATH', plugin_dir_path( __FILE__ ) );
+define( 'AGENTIC_SHOP_URL', plugin_dir_url( __FILE__ ) );
 
 require_once AGENTIC_SHOP_PATH . 'includes/class-agentic-airport-api.php';
 require_once AGENTIC_SHOP_PATH . 'includes/class-agentic-airport-support.php';

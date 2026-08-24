@@ -21,6 +21,11 @@ final class Agentic_Airport_Support_Test extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'Flight status', $output );
 		$this->assertStringContainsString( 'Airline routes', $output );
 		$this->assertStringContainsString( 'agentic_airport_nonce', $output );
+		$this->assertStringContainsString( 'data-agentic-airport-results', $output );
+		$this->assertStringContainsString( 'admin-ajax.php', $output );
+		$this->assertTrue( wp_script_is( 'agentic-airport-support', 'enqueued' ) );
+		$this->assertNotFalse( has_action( 'wp_ajax_agentic_airport_lookup', array( Agentic_Airport_Support::class, 'ajax_lookup' ) ) );
+		$this->assertNotFalse( has_action( 'wp_ajax_nopriv_agentic_airport_lookup', array( Agentic_Airport_Support::class, 'ajax_lookup' ) ) );
 	}
 
 	public function test_missing_api_key_returns_an_error(): void {
