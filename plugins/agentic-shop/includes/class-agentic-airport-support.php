@@ -70,8 +70,8 @@ final class Agentic_Airport_Support {
 			</form>
 			<p class="description"><?php echo esc_html__( 'Real-time flights are available on the free plan; airline routes require a paid plan.', 'agentic-shop' ); ?></p>
 			<p>
-				<a class="button button-secondary" href="https://aviationstack.com/dashboard" target="_blank" rel="noopener noreferrer"><?php echo esc_html__( 'View API usage', 'agentic-shop' ); ?></a>
-				<a class="button button-secondary" href="https://docs.apilayer.com/aviationstack/docs/api-documentation" target="_blank" rel="noopener noreferrer"><?php echo esc_html__( 'API documentation', 'agentic-shop' ); ?></a>
+				<a class="button button-secondary" href="<?php echo esc_url( 'https://aviationstack.com/dashboard' ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html__( 'View API usage', 'agentic-shop' ); ?></a>
+				<a class="button button-secondary" href="<?php echo esc_url( 'https://docs.apilayer.com/aviationstack/docs/api-documentation' ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html__( 'API documentation', 'agentic-shop' ); ?></a>
 			</p>
 		</div>
 		<?php

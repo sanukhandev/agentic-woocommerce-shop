@@ -52,16 +52,16 @@ final class Agentic_Airport_Support_Test extends WP_UnitTestCase {
 	}
 
 	public function test_aviationstack_plan_restriction_returns_clear_error(): void {
-		$mock = static function (): array {
+		$mock = static function ( $preempt, $args, $url ): array {
 			return array(
-				'response' => array( 'code' => 403 ),
+				'response' => array( 'code' => 200 ),
 				'body'     => '{"success":false,"error":{"type":"function_access_restricted"}}',
 			);
 		};
 
-		add_filter( 'pre_http_request', $mock );
+		add_filter( 'pre_http_request', $mock, 10, 3 );
 		$result = ( new Agentic_Airport_API( 'test-key' ) )->get_routes( 'AA' );
-		remove_filter( 'pre_http_request', $mock );
+		remove_filter( 'pre_http_request', $mock, 10 );
 
 		$this->assertWPError( $result );
 		$this->assertSame( 'agentic_airport_plan_restricted', $result->get_error_code() );
@@ -70,7 +70,7 @@ final class Agentic_Airport_Support_Test extends WP_UnitTestCase {
 	public function test_uncached_lookups_are_rate_limited(): void {
 		$rate_key = 'agentic_airport_rate_' . hash( 'sha256', '127.0.0.1' );
 		$requests = 0;
-		$mock     = static function () use ( &$requests ): array {
+		$mock     = static function ( $preempt, $args, $url ) use ( &$requests ): array {
 			++$requests;
 			return array( 'response' => array( 'code' => 200 ), 'body' => '{"data":[]}' );
 		};
@@ -85,13 +85,13 @@ final class Agentic_Airport_Support_Test extends WP_UnitTestCase {
 			'agentic_airport_nonce'  => wp_create_nonce( 'agentic_airport_lookup' ),
 			'agentic_airport_query'  => 'AA100',
 		);
-		add_filter( 'pre_http_request', $mock );
+		add_filter( 'pre_http_request', $mock, 10, 3 );
 
 		Agentic_Airport_Support::render_shortcode();
 		$_POST['agentic_airport_query'] = 'BB200';
 		$output                          = Agentic_Airport_Support::render_shortcode();
 
-		remove_filter( 'pre_http_request', $mock );
+		remove_filter( 'pre_http_request', $mock, 10 );
 		delete_transient( $rate_key );
 		delete_transient( 'agentic_aviationstack_flight_aa100' );
 		delete_transient( 'agentic_aviationstack_flight_bb200' );

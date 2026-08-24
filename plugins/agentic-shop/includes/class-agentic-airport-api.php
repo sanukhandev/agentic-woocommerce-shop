@@ -87,13 +87,13 @@ final class Agentic_Airport_API {
 			return new WP_Error( 'agentic_airport_invalid_response', __( 'The flight service returned invalid data.', 'agentic-shop' ) );
 		}
 
-		if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
-			$error_type = isset( $decoded['error']['type'] ) ? (string) $decoded['error']['type'] : '';
+		$error_type = isset( $decoded['error']['type'] ) ? (string) $decoded['error']['type'] : '';
+		if ( $error_type || 200 !== wp_remote_retrieve_response_code( $response ) ) {
 			if ( 'function_access_restricted' === $error_type ) {
 				return new WP_Error( 'agentic_airport_plan_restricted', __( 'This lookup is not available on your Aviationstack plan.', 'agentic-shop' ) );
 			}
 			if ( 'invalid_access_key' === $error_type || 'missing_access_key' === $error_type ) {
-				return new WP_Error( 'agentic_airport_invalid_key', __( 'The Aviationstack API key is invalid.', 'agentic-shop' ) );
+				return new WP_Error( 'agentic_airport_invalid_key', __( 'The Aviationstack API access key is invalid.', 'agentic-shop' ) );
 			}
 			return new WP_Error( 'agentic_airport_bad_response', __( 'The flight service returned an error.', 'agentic-shop' ) );
 		}
