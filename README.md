@@ -43,15 +43,19 @@ agentic-woocommerce-shop/
 
 ## Airport Support
 
-The Agentic Shop plugin includes a server-side Aviation Edge integration for
+The Agentic Shop plugin includes a server-side Aviationstack integration for
 flight status and airline route lookups. To use it:
 
 1. Activate **Agentic Shop** and WooCommerce.
 2. In WordPress admin, open **Settings → Airport Support** and save an
-   Aviation Edge API key.
+   Aviationstack API access key.
 3. Add the `[agentic_airport_support]` shortcode to a page.
 4. On that page, choose **Flight status** and enter a flight IATA code, or
    choose **Airline routes** and enter an airline IATA code.
 
+Real-time flights are available on Aviationstack's free plan; airline routes
+require a paid plan.
+
 The API key is stored as a WordPress option and is used only for server-side
-requests to Aviation Edge; it is not included in front-end markup.
+requests to Aviationstack; it is not included in front-end markup. Authoritative
+quota usage is linked from the plugin settings page.
