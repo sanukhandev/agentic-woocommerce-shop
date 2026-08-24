@@ -7,6 +7,10 @@
 
 namespace AgenticShop\Services;
 
+if ( ! defined( 'ABSPATH' ) && ! \in_array( \php_sapi_name(), array( 'cli', 'phpdbg' ), true ) ) {
+	exit;
+}
+
 use InvalidArgumentException;
 
 /**
