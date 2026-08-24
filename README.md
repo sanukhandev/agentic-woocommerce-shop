@@ -35,6 +35,23 @@ agentic-woocommerce-shop/
 ├── package.json
 ├── plugins/
 │   └── agentic-shop/
-│       └── agentic-shop.php
+│       ├── agentic-shop.php
+│       ├── includes/
+│       └── tests/
 └── themes/
 ```
+
+## Airport Support
+
+The Agentic Shop plugin includes a server-side Aviation Edge integration for
+flight status and airline route lookups. To use it:
+
+1. Activate **Agentic Shop** and WooCommerce.
+2. In WordPress admin, open **Settings → Airport Support** and save an
+   Aviation Edge API key.
+3. Add the `[agentic_airport_support]` shortcode to a page.
+4. On that page, choose **Flight status** and enter a flight IATA code, or
+   choose **Airline routes** and enter an airline IATA code.
+
+The API key is stored as a WordPress option and is used only for server-side
+requests to Aviation Edge; it is not included in front-end markup.

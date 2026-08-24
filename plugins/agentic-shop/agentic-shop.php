@@ -13,15 +13,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'AGENTIC_SHOP_VERSION', '1.0.0' );
 define( 'AGENTIC_SHOP_PATH', plugin_dir_path( __FILE__ ) );
 
+require_once AGENTIC_SHOP_PATH . 'includes/class-agentic-airport-api.php';
+require_once AGENTIC_SHOP_PATH . 'includes/class-agentic-airport-support.php';
+
 /**
  * Initialize the plugin.
  */
-function agentic_shop_init() {
+function agentic_shop_init(): void {
 
     if ( ! class_exists( 'WooCommerce' ) ) {
         return;
     }
 
+    Agentic_Airport_Support::init();
 }
 
 add_action( 'plugins_loaded', 'agentic_shop_init' );
