@@ -44,7 +44,10 @@ final class Agentic_Airport_Support {
 		);
 	}
 
-	public static function sanitize_api_key( string $api_key ): string {
+	public static function sanitize_api_key( $api_key ): string {
+		if ( ! is_string( $api_key ) ) {
+			return '';
+		}
 		return preg_replace( '/[^A-Za-z0-9_-]/', '', $api_key ) ?? '';
 	}
 
@@ -79,11 +82,24 @@ final class Agentic_Airport_Support {
 			if ( wp_verify_nonce( $nonce, 'agentic_airport_lookup' ) ) {
 				$mode  = sanitize_key( wp_unslash( (string) $_POST['agentic_airport_action'] ) );
 				$query = sanitize_text_field( wp_unslash( (string) ( $_POST['agentic_airport_query'] ?? '' ) ) );
-				if ( preg_match( '/^[A-Za-z0-9]{2,8}$/', $query ) ) {
-					$api    = new Agentic_Airport_API( (string) get_option( self::OPTION_KEY, '' ) );
-					$result = 'route' === $mode ? $api->get_routes( $query ) : $api->get_flight( $query );
-				} else {
+
+				$allowed_actions = array( 'flight', 'route' );
+				if ( ! in_array( $mode, $allowed_actions, true ) ) {
+					$result = new WP_Error( 'agentic_airport_invalid_action', __( 'Invalid search type.', 'agentic-shop' ) );
+				} elseif ( ! preg_match( '/^[A-Za-z0-9]{2,8}$/', $query ) ) {
 					$result = new WP_Error( 'agentic_airport_invalid_query', __( 'Enter a valid flight or airline IATA code.', 'agentic-shop' ) );
+				} else {
+					$cache_key = 'agentic_airport_' . $mode . '_' . strtolower( $query );
+					$cached    = get_transient( $cache_key );
+					if ( false !== $cached ) {
+						$result = $cached;
+					} else {
+						$api    = new Agentic_Airport_API( (string) get_option( self::OPTION_KEY, '' ) );
+						$result = 'route' === $mode ? $api->get_routes( $query ) : $api->get_flight( $query );
+						if ( ! is_wp_error( $result ) ) {
+							set_transient( $cache_key, $result, 5 * MINUTE_IN_SECONDS );
+						}
+					}
 				}
 			}
 		}
