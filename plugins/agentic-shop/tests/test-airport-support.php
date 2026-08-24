@@ -43,7 +43,7 @@ final class Agentic_Airport_Support_Test extends WP_UnitTestCase {
 
 		add_filter( 'pre_http_request', $mock, 10, 3 );
 		$result = ( new Agentic_Airport_API( 'test-key' ) )->get_flight( 'aa100' );
-		remove_filter( 'pre_http_request', $mock );
+		remove_filter( 'pre_http_request', $mock, 10 );
 
 		$this->assertStringContainsString( 'https://api.aviationstack.com/v1/flights', $url );
 		$this->assertStringContainsString( 'access_key=test-key', $url );
