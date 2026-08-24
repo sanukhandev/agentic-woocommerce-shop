@@ -766,7 +766,7 @@ Use the project's existing `wp-env` setup.
 Typical commands may include:
 
 ```bash
-npm run wp-env start
+npm run start
 ```
 
 or:
