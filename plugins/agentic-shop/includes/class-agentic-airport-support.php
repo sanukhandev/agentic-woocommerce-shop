@@ -62,12 +62,17 @@ final class Agentic_Airport_Support {
 				<?php settings_fields( 'agentic_airport_settings' ); ?>
 				<table class="form-table" role="presentation">
 					<tr>
-						<th scope="row"><label for="agentic-airport-api-key"><?php echo esc_html__( 'Aviation Edge API key', 'agentic-shop' ); ?></label></th>
+						<th scope="row"><label for="agentic-airport-api-key"><?php echo esc_html__( 'Aviationstack API access key', 'agentic-shop' ); ?></label></th>
 						<td><input class="regular-text" id="agentic-airport-api-key" name="<?php echo esc_attr( self::OPTION_KEY ); ?>" type="password" value="<?php echo esc_attr( (string) get_option( self::OPTION_KEY, '' ) ); ?>" autocomplete="new-password"></td>
 					</tr>
 				</table>
 				<?php submit_button(); ?>
 			</form>
+			<p class="description"><?php echo esc_html__( 'Real-time flights are available on the free plan; airline routes require a paid plan.', 'agentic-shop' ); ?></p>
+			<p>
+				<a class="button button-secondary" href="https://aviationstack.com/dashboard" target="_blank" rel="noopener noreferrer"><?php echo esc_html__( 'View API usage', 'agentic-shop' ); ?></a>
+				<a class="button button-secondary" href="https://docs.apilayer.com/aviationstack/docs/api-documentation" target="_blank" rel="noopener noreferrer"><?php echo esc_html__( 'API documentation', 'agentic-shop' ); ?></a>
+			</p>
 		</div>
 		<?php
 	}
@@ -90,7 +95,7 @@ final class Agentic_Airport_Support {
 					$result = new WP_Error( 'agentic_airport_invalid_query', __( 'Enter a valid flight or airline IATA code.', 'agentic-shop' ) );
 				} else {
 					$client_ip = sanitize_text_field( wp_unslash( (string) ( $_SERVER['REMOTE_ADDR'] ?? '' ) ) );
-					$cache_key = 'agentic_airport_' . $mode . '_' . strtolower( $query );
+					$cache_key = 'agentic_aviationstack_' . $mode . '_' . strtolower( $query );
 					$rate_key  = 'agentic_airport_rate_' . hash( 'sha256', $client_ip );
 					$cached    = get_transient( $cache_key );
 					if ( false !== $cached ) {
@@ -151,12 +156,12 @@ final class Agentic_Airport_Support {
 				continue;
 			}
 			if ( 'route' === $mode ) {
-				$departure = isset( $item['departureIata'] ) ? (string) $item['departureIata'] : '';
-				$arrival   = isset( $item['arrivalIata'] ) ? (string) $item['arrivalIata'] : '';
+				$departure = isset( $item['departure']['iata'] ) ? (string) $item['departure']['iata'] : '';
+				$arrival   = isset( $item['arrival']['iata'] ) ? (string) $item['arrival']['iata'] : '';
 				echo '<p><strong>' . esc_html( $departure ) . '</strong> &rarr; <strong>' . esc_html( $arrival ) . '</strong></p>';
 			} else {
-				$flight = isset( $item['flight']['iataNumber'] ) ? (string) $item['flight']['iataNumber'] : '';
-				$status = isset( $item['status'] ) ? (string) $item['status'] : __( 'Unknown', 'agentic-shop' );
+				$flight = isset( $item['flight']['iata'] ) ? (string) $item['flight']['iata'] : '';
+				$status = isset( $item['flight_status'] ) ? (string) $item['flight_status'] : __( 'Unknown', 'agentic-shop' );
 				echo '<p><strong>' . esc_html( $flight ) . ':</strong> ' . esc_html( $status ) . '</p>';
 			}
 		}
