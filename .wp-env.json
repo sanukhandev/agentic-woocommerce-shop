@@ -1,6 +1,7 @@
 {
   "core": "https://wordpress.org/wordpress-6.9.zip",
   "plugins": [
+    "./plugins/agentic-shop",
     "https://downloads.wordpress.org/plugin/woocommerce.latest-stable.zip"
   ],
   "phpVersion": "8.2",
