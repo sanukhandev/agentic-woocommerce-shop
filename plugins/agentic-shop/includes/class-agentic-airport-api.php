@@ -30,14 +30,26 @@ final class Agentic_Airport_API {
 	 * @return array<int, mixed>|WP_Error
 	 */
 	public function get_flight( string $flight_iata ) {
-		return $this->request( 'flights', array( 'flightIata' => strtoupper( $flight_iata ) ) );
+		return $this->request(
+			'flights',
+			array(
+				'flightIata' => strtoupper( $flight_iata ),
+				'limit'      => '25',
+			)
+		);
 	}
 
 	/**
 	 * @return array<int, mixed>|WP_Error
 	 */
 	public function get_routes( string $airline_iata ) {
-		return $this->request( 'routes', array( 'airlineIata' => strtoupper( $airline_iata ) ) );
+		return $this->request(
+			'routes',
+			array(
+				'airlineIata' => strtoupper( $airline_iata ),
+				'limit'       => '25',
+			)
+		);
 	}
 
 	/**
@@ -59,7 +71,7 @@ final class Agentic_Airport_API {
 				$url,
 				array(
 					'headers' => array( 'Accept' => 'application/json' ),
-					'timeout' => 15,
+					'timeout' => 5,
 				)
 			);
 		} catch ( Throwable $error ) {
